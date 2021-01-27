@@ -1,7 +1,7 @@
-",""Kate"",""Rose"",""George"",""John"",""Jean"",""Ann"",""Eve"",""Steve"",""Blaire"",""Gwen"",""Kim"",""Joe"",""Grace"",""Sue"",""Ellen"",""Claire"",""Mike"",""Tess"""
+,Kate,Rose,George,John,Jean,Ann,Eve,Steve,Blaire,Gwen,Kim,Joe,Grace,Sue,Ellen,Claire,Mike,Tess
 Kate,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
 Rose,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-Beth,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+George,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 John,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 Jean,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0
 Ann,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0

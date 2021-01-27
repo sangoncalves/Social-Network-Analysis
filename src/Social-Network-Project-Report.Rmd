@@ -1,5 +1,5 @@
 ---
-title: "Social-Network-Project"
+title: "Untitled"
 author: "Sander_MartinsGoncalves&Nisha_Antony"
 date: "27/01/2021"
 output: html_document
@@ -9,3 +9,279 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# 1. Drawing a network using R
+You are provided with a dataset (friendshipXXX.csv), which contains the undirected network
+for friendship among a group of students. You were also given a dataset with attributes for
+each student. This includes:
+- gender (1=female, 0=male),
+- their grade (going from 0, the lowest to 10, the highest) and
+- their top music preference (1=Rock Music, 2=Electronic Dance Music, 3=Pop Music, 4=Latin, 5=R&B)
+
+
+
+
+```{r include=FALSE}
+library("igraph")
+
+frienship <- read.csv("../Dataset/Friendship011.csv", stringsAsFactors=FALSE, row.names=1)
+profile_attribute <- read.csv("../Dataset/Attributes_Gender_Grade_Music.csv", stringsAsFactors=FALSE, row.names=1)
+
+frienship <- as.matrix(frienship)
+
+# Converting to matrix to igraph object
+frienship_igraph <- graph_from_adjacency_matrix(frienship, mode = c("undirected"), diag = FALSE)
+
+frienship_igraph # IGRPH UN-- 18 18 first val represents nodes and second val undirected edges
+
+V(frienship_igraph)$name #name of the vertices
+```
+
+## 1.1. Draw the network using the Fruchterman-Reingold layout.
+
+```{r echo=FALSE}
+plot(frienship_igraph, layout=layout_with_fr, 
+     vertex.size = 18,
+     vertex.shape = "sphere",
+     vertex.label.cex = 1,
+     vertex.label.color = "grey3",
+     vertex.label.dist = 1.5,
+     vertex.label.degree=-pi/2)
+```
+
+## 1.2. Next draw the network again using the Fruchterman-Reingold layout but now with attributes gender, age and top music preference.
+
+```{r echo=FALSE}
+# Adding attributes to graph object
+profile_attribute <- as.matrix(read.csv("../Dataset/Attributes_Gender_Grade_Music.csv", stringsAsFactors=FALSE, row.names=1))
+
+# checking the order is consistent 
+sum(rownames(profile_attribute)!=colnames(frienship))
+
+# adding gender and grade to igraph obj
+V(frienship_igraph)$Gender <- as.numeric(profile_attribute[, 1])
+V(frienship_igraph)$Grade <- as.numeric(profile_attribute[, 2])
+V(frienship_igraph)$Music <- as.numeric(profile_attribute[, 3])
+
+frienship_igraph
+
+# setting color, size and shape for attributes
+V(frienship_igraph)$shape[V(frienship_igraph)$Gender == 0] <- "square"
+V(frienship_igraph)$shape[V(frienship_igraph)$Gender == 1] <- "sphere"
+
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 1] <- "red"
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 2] <- "goldenrod1"
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 3] <- "green"
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 4] <- "black"
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 5] <- "olivedrab3"
+
+plot(frienship_igraph, layout=layout_with_fr,
+     vertex.size = V(frienship_igraph)$Grade*2,
+     vertex.label.cex = 1,
+     vertex.label.color = "grey3",
+     vertex.label.dist = 1.5)
+
+legend(x=.9, y=.9, legend=c("Female", "Male"), 
+       pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
+```
+
+
+## 1.3. Create a legend for the attributes.
+
+```{r echo=FALSE}
+plot(frienship_igraph, layout=layout_with_fr,
+     vertex.size = V(frienship_igraph)$Grade*2,
+     vertex.label.cex = 1,
+     vertex.label.color = "grey3",
+     vertex.label.dist = 1.5)
+
+legend(x=.9, y=.9, legend=c("Female", "Male"), 
+       pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
+```
+
+## 1.4. Add the script of how you obtained the drawings.
+Can be seem above.
+
+
+
+
+# 2. Centrality
+Next, use the dataset (friendshipXXX.csv) to calculate the centrality of all the nodes.
+
+## 2.1. Calculate Freeman’s closeness centrality for each node and interpret your results.
+▪ Provide the closeness centrality score for each node.
+
+```{r echo=FALSE}
+centrality <- closeness(frienship_igraph, normalized = T)
+print("Centrality of nodes in descending order")
+sort(centrality, decreasing = T)
+print("Highest centrality value: ")
+centrality[which.max(centrality)]
+
+```
+
+### 2.1.1 What does it mean substantively in this case?
+
+
+
+
+
+### 2.1.2 Who is most closeness central?
+
+```{r echo=FALSE}
+betweenness_centrality <- betweenness(frienship_igraph, directed = F, normalized = T)
+print("The most central is:")
+sort(betweenness_centrality, decreasing = T)
+```
+
+### 2.1.3 Provide details of the meaning of the value.
+
+
+
+
+### 2.1.4 Make sure to discuss the reference points for the closeness measure. What is
+the minimum and maximum value?
+```{r echo=FALSE}
+print("Highest centrality: ")
+print(centrality[which.max(centrality)])
+print("Lowest centrality: ")
+print(centrality[which.min(centrality)])
+```
+
+The cost to reach Ellen is the highest one, also if we want to spread information, Ellen is the least efficient node and Jean is the most efficient node. 
+
+## 2.2. Calculate the betweenness centrality for each node.
+### 2.2.1 Provide the betweenness centrality score for each node.
+
+```{r echo=FALSE}
+betweenness_centrality <-  sort(betweenness(frienship_igraph, directed = F, normalized = T), decreasing = T)
+```
+
+### 2.2.2 What does it mean substantively in this case?
+### 2.2.3 Who is most betweenness central?
+### 2.2.4 Provide details of the meaning of the value.
+### 2.2.5 Make sure to discuss the reference points for the betweenness measure. What is the minimum and maximum value?
+
+```{r echo=FALSE}
+print("Maximum value:")
+print(centrality[which.max(centrality)])
+print("Maximum value:")
+print(centrality[which.min(centrality)])
+```
+
+# 3. Density and reciprocity    
+Figure 1 provides the advice network among 9 employees in a team.
+
+The figure 1 was created in order to do the calculations.
+```{r include=FALSE}
+a <- c(0, 1, 0,	0, 0,	0, 0,	0, 0)
+
+b <- c(1,	0, 0,	0, 0,	0, 1,	0, 0)
+
+c <- c(0,	1, 0,	0, 0,	0, 0,	0, 0)
+
+d <- c(0,	0, 0,	0, 1, 0, 1,	0, 0)
+
+e <- c(0,	0, 0,	0, 0,	0, 1,	0, 0)
+
+f <- c(0,	0, 0,	0, 1,	0, 0,	0, 0)
+
+g <- c(0, 1, 1, 1, 1, 1, 0, 1, 0)
+
+h <- c(0, 1, 0, 0, 0, 0, 0, 0, 1)
+
+i <- c(1, 0, 0, 0, 0, 0, 0, 0, 0)
+
+emp_network <- data.frame(a, b, c, d, e, f, g, h, i)
+
+x = c("a", "b", "c", "d", "e", "f", "g", "h", "i")
+rownames(emp_network) <- x
+emp_network <- as.matrix(emp_network)
+
+# Converting to matrix to igraph object
+emp_igraph <- graph_from_adjacency_matrix(emp_network, mode = c("directed"))
+plot(emp_igraph, layout=layout_with_fr, 
+     vertex.size = 18,
+     vertex.shape = "sphere",
+     vertex.label.cex = 1,
+     vertex.label.color = "grey3",
+     vertex.label.dist = 1.5,
+     vertex.label.degree=-pi/2)
+edge_density(emp_igraph)
+
+# Density = number of ties/number of possible ties
+density = 17/(9*8)
+
+# Arc-based Reciprocity
+reciprocity(emp_igraph)
+r = 8;
+u = 9;
+arc_reci = function(r, u) {
+  return(r / (r + u))
+}
+  
+
+# Since "g" has max number of ties, we calculate the max val with respect to "g"
+
+arc_rec_g = arc_reci(6, 3)
+```
+
+## 3.1. Calculate the density for this network and interpret.
+```{r}
+# Density = number of ties/number of possible ties
+density = 17/(9*8)
+```
+
+> Make sure to show how you came to this answer.
+
+### 3.1.1 What do you conclude substantively (taking into account that the network is “Who did you ask advice from in the last week?”)?
+
+
+
+### 3.1.2 Make sure to discuss the reference points for the measure. What is the minimum and maximum value?
+
+
+
+
+# 3.2. Calculate the arc-based reciprocity index for this network and interpret.
+> Make sure to show how you came to this answer.
+
+```{r}
+print(" Arc-based Reciprocity formula:")
+print()
+arc_recip = function(r, u) {
+  return(r / (r + u))
+}
+r = 8
+u = 9 
+print("If we consider the whole network")
+paste(" reciprocity connections: ", r)
+paste(" connections not reciprocity: ", u)
+paste("Arc-based Reciprocity: ",arc_recip(r,u))
+
+
+```
+
+### 3.2.1 What do you conclude substantively (taking into account that the network is “Who did you ask advice from in the last week?”)?
+
+
+
+### 3.2.2 Make sure to discuss the reference points for the measure. What is the minimum, expected and maximum value?
+
+# 4. Homophily/Heterophily for ego
+Figure 2 shows the friendship network among students (with gender Male and Female).
+## 4.1. Calculate the EI-index for person b in Figure 2.
+> Make sure to show how you came to this answer.
+
+### 4.1.1 What do you conclude substantively (taking into account that it is a friendship among students)?
+> Make sure to discuss the reference points for the measure.
+
+Person-b is a female and has 2 male friends and 2 female friends.
+
+
+## 4.2. Next, calculate Yule’s Q for person b in Figure 2.
+> Make sure to show how you came to this answer.
+
+### 4.2.1 What do you conclude substantively (taking into account that it is a friendship among students)?
+> Make sure to discuss the reference points for the measure.
+
+### 4.2.2 What is the difference with the EI index?

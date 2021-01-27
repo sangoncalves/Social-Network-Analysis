@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # 1. Drawing a network using R
-You are provided with a dataset (friendshipXXX.csv), which contains the undirected network
+You are provided with a dataset (friendship011.csv), which contains the undirected network
 for friendship among a group of students. You were also given a dataset with attributes for
 each student. This includes:
 - gender (1=female, 0=male),
@@ -22,6 +22,7 @@ each student. This includes:
 
 ```{r include=FALSE}
 library("igraph")
+library("equatiomatic")
 
 frienship <- read.csv("../Dataset/Friendship011.csv", stringsAsFactors=FALSE, row.names=1)
 profile_attribute <- read.csv("../Dataset/Attributes_Gender_Grade_Music.csv", stringsAsFactors=FALSE, row.names=1)
@@ -35,6 +36,12 @@ frienship_igraph # IGRPH UN-- 18 18 first val represents nodes and second val un
 
 V(frienship_igraph)$name #name of the vertices
 ```
+
+Checking if the order of the file is consistent
+```{r}
+sum(rownames(profile_attribute)!=colnames(frienship))
+```
+zero means that there is no different value regarding row/column. Good to go!
 
 ## 1.1. Draw the network using the Fruchterman-Reingold layout.
 
@@ -53,9 +60,6 @@ plot(frienship_igraph, layout=layout_with_fr,
 ```{r echo=FALSE}
 # Adding attributes to graph object
 profile_attribute <- as.matrix(read.csv("../Dataset/Attributes_Gender_Grade_Music.csv", stringsAsFactors=FALSE, row.names=1))
-
-# checking the order is consistent 
-sum(rownames(profile_attribute)!=colnames(frienship))
 
 # adding gender and grade to igraph obj
 V(frienship_igraph)$Gender <- as.numeric(profile_attribute[, 1])
@@ -80,8 +84,6 @@ plot(frienship_igraph, layout=layout_with_fr,
      vertex.label.color = "grey3",
      vertex.label.dist = 1.5)
 
-legend(x=.9, y=.9, legend=c("Female", "Male"), 
-       pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
 ```
 
 
@@ -92,10 +94,18 @@ plot(frienship_igraph, layout=layout_with_fr,
      vertex.size = V(frienship_igraph)$Grade*2,
      vertex.label.cex = 1,
      vertex.label.color = "grey3",
-     vertex.label.dist = 1.5)
+     vertex.label.dist = 1.5,)
 
-legend(x=.9, y=.9, legend=c("Female", "Male"), 
+legend("bottomright", legend=c("Female", "Male"), 
        pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
+
+legend("topleft", inset=.02,
+   c("Rock Music", "Electronic Dance Music","Pop Music", "Latin", "R&B"),fill =frienship_igraph$Music , horiz=FALSE, cex=0.8)
+
+
+
+# legend(x=.9, y=.9, legend=c("Female", "Male"), 
+#        pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
 ```
 
 ## 1.4. Add the script of how you obtained the drawings.
@@ -105,10 +115,12 @@ Can be seem above.
 
 
 # 2. Centrality
-Next, use the dataset (friendshipXXX.csv) to calculate the centrality of all the nodes.
+
+>Next, use the dataset (friendship011.csv) to calculate the centrality of all the nodes.
 
 ## 2.1. Calculate Freeman’s closeness centrality for each node and interpret your results.
-▪ Provide the closeness centrality score for each node.
+
+> Provide the closeness centrality score for each node.
 
 ```{r echo=FALSE}
 centrality <- closeness(frienship_igraph, normalized = T)
@@ -121,8 +133,7 @@ centrality[which.max(centrality)]
 
 ### 2.1.1 What does it mean substantively in this case?
 
-
-
+If we consider the flow of information, where we want to spread the information than the most efficient person to spread it would be "Jean" (information reach all network faster) and the last efficient one would be "Ellen" (takes long for the information to reach all network). In this case, the more central a person (node) is, the closer he/she is from all other people (nodes) in the network.
 
 
 ### 2.1.2 Who is most closeness central?
@@ -135,41 +146,52 @@ sort(betweenness_centrality, decreasing = T)
 
 ### 2.1.3 Provide details of the meaning of the value.
 
+A person that has the highest number in the network means that he/she is the most influence person on this network and it is defined by the number of links that this person has.
 
 
-
-### 2.1.4 Make sure to discuss the reference points for the closeness measure. What is
-the minimum and maximum value?
+### 2.1.4 Make sure to discuss the reference points for the closeness measure. What is the minimum and maximum value?
 ```{r echo=FALSE}
 print("Highest centrality: ")
 print(centrality[which.max(centrality)])
 print("Lowest centrality: ")
 print(centrality[which.min(centrality)])
 ```
-
-The cost to reach Ellen is the highest one, also if we want to spread information, Ellen is the least efficient node and Jean is the most efficient node. 
+In the case where we have an information being spread by the most influencer person in the network(Jean), Ellen will be the last person (node) to receive it.
 
 ## 2.2. Calculate the betweenness centrality for each node.
-### 2.2.1 Provide the betweenness centrality score for each node.
+
+> 2.2.1 Provide the betweenness centrality score for each node.
 
 ```{r echo=FALSE}
 betweenness_centrality <-  sort(betweenness(frienship_igraph, directed = F, normalized = T), decreasing = T)
 ```
 
-### 2.2.2 What does it mean substantively in this case?
-### 2.2.3 Who is most betweenness central?
-### 2.2.4 Provide details of the meaning of the value.
-### 2.2.5 Make sure to discuss the reference points for the betweenness measure. What is the minimum and maximum value?
+### 2.2.1 What does it mean substantively in this case?
+It measures the control of information that a person have in the network (bridge concept). A person that is considered the shortest path to highest number of nodes has more control of information. 
+
+
+### 2.2.2 Who is most betweenness central?
+
+```{r betweenness centrality, echo=FALSE}
+print("Highest betweenness centrality: ")
+print(betweenness_centrality[which.max(betweenness_centrality)])
+```
+
+### 2.2.3 Provide details of the meaning of the value.
+
+In some cases, certain parts of the network can only be reached through a certain node, that confers "power" to the node in a way that it could control the flow of information of the network
+
+### 2.2.4 Make sure to discuss the reference points for the betweenness measure. What is the minimum and maximum value?
 
 ```{r echo=FALSE}
 print("Maximum value:")
-print(centrality[which.max(centrality)])
+print(betweenness_centrality[which.max(betweenness_centrality)])
 print("Maximum value:")
-print(centrality[which.min(centrality)])
+print(betweenness_centrality[which.min(betweenness_centrality)])
 ```
 
 # 3. Density and reciprocity    
-Figure 1 provides the advice network among 9 employees in a team.
+> Figure 1 provides the advice network among 9 employees in a team.
 
 The figure 1 was created in order to do the calculations.
 ```{r include=FALSE}
@@ -197,6 +219,12 @@ x = c("a", "b", "c", "d", "e", "f", "g", "h", "i")
 rownames(emp_network) <- x
 emp_network <- as.matrix(emp_network)
 
+# Density = number of ties/number of possible ties
+density = 17/(9*8)
+```
+
+
+```{r Figure 1, echo=FALSE}
 # Converting to matrix to igraph object
 emp_igraph <- graph_from_adjacency_matrix(emp_network, mode = c("directed"))
 plot(emp_igraph, layout=layout_with_fr, 
@@ -207,10 +235,47 @@ plot(emp_igraph, layout=layout_with_fr,
      vertex.label.dist = 1.5,
      vertex.label.degree=-pi/2)
 edge_density(emp_igraph)
+```
 
-# Density = number of ties/number of possible ties
-density = 17/(9*8)
 
+
+
+## 3.1. Calculate the density for this network and interpret.
+Density = number of ties/number of possible ties
+density = $\frac{17}{9*8}$
+```{r echo=FALSE}
+paste("density = ",17/(9*8))
+```
+
+> Make sure to show how you came to this answer.
+
+### 3.1.1 What do you conclude substantively 
+> (taking into account that the network is “Who did you ask advice from in the last week?”)?
+
+There are more people asking advice (to receive) that than being asked (to give).
+
+
+### 3.1.2 Make sure to discuss the reference points for the measure. What is the minimum and maximum value?
+
+Maximum number of ties:
+```{r}
+paste("density of g = ",9/(9*8))
+```
+
+Minimum number of ties:
+```{r}
+paste("density of c ou f = ",2/(9*8))
+```
+
+
+# 3.2. Calculate the arc-based reciprocity index for this network and interpret.
+> Make sure to show how you came to this answer.
+
+> Arc-based Reciprocity formula:
+
+> $\frac{r}{r+u}$ ${r = }$ reciprocity connections, ${u = }$ non reciprocity connections
+
+```{r include=FALSE}
 # Arc-based Reciprocity
 reciprocity(emp_igraph)
 r = 8;
@@ -225,63 +290,98 @@ arc_reci = function(r, u) {
 arc_rec_g = arc_reci(6, 3)
 ```
 
-## 3.1. Calculate the density for this network and interpret.
-```{r}
-# Density = number of ties/number of possible ties
-density = 17/(9*8)
-```
 
-> Make sure to show how you came to this answer.
-
-### 3.1.1 What do you conclude substantively (taking into account that the network is “Who did you ask advice from in the last week?”)?
-
-
-
-### 3.1.2 Make sure to discuss the reference points for the measure. What is the minimum and maximum value?
-
-
-
-
-# 3.2. Calculate the arc-based reciprocity index for this network and interpret.
-> Make sure to show how you came to this answer.
-
-```{r}
-print(" Arc-based Reciprocity formula:")
-print()
-arc_recip = function(r, u) {
-  return(r / (r + u))
-}
+```{r echo=FALSE}
 r = 8
 u = 9 
 print("If we consider the whole network")
 paste(" reciprocity connections: ", r)
 paste(" connections not reciprocity: ", u)
-paste("Arc-based Reciprocity: ",arc_recip(r,u))
+paste("Arc-based Reciprocity: ",arc_reci(r,u))
 
 
 ```
 
-### 3.2.1 What do you conclude substantively (taking into account that the network is “Who did you ask advice from in the last week?”)?
+### 3.2.1 What do you conclude substantively?
+> (taking into account that the network is “Who did you ask advice from in the last week?”)
 
 
 
 ### 3.2.2 Make sure to discuss the reference points for the measure. What is the minimum, expected and maximum value?
 
+```{r}
+arc_rec_a = arc_reci(, )
+arc_rec_b = arc_reci(, )
+arc_rec_c = arc_reci(, )
+arc_rec_d = arc_reci(, )
+arc_rec_e = arc_reci(, )
+arc_rec_f = arc_reci(, )
+arc_rec_g
+
+```
+
+
 # 4. Homophily/Heterophily for ego
 Figure 2 shows the friendship network among students (with gender Male and Female).
+
 ## 4.1. Calculate the EI-index for person b in Figure 2.
 > Make sure to show how you came to this answer.
 
-### 4.1.1 What do you conclude substantively (taking into account that it is a friendship among students)?
+EL-index = $\frac{(Ext - Int)}{(Ext + Int)}$ 
+
+Ext = different type as node
+Int = Same type as node
+
+EL-index (b) = (2 - 2)/(2 + 2)
+```{r echo=FALSE}
+(2 - 2)/(2 + 2)
+```
+
+
+### 4.1.1 What do you conclude substantively?
+
+> (taking into account that it is a friendship among students)
+
 > Make sure to discuss the reference points for the measure.
 
-Person-b is a female and has 2 male friends and 2 female friends.
+
+Person-b is a female and has 2 male friends and 2 female friends. Equally quantity of nodes types.
 
 
 ## 4.2. Next, calculate Yule’s Q for person b in Figure 2.
+
 > Make sure to show how you came to this answer.
 
-### 4.2.1 What do you conclude substantively (taking into account that it is a friendship among students)?
+$Q_i = \frac{ad - bc}{ad + bc}$
+
+a = Nodes who are the same type as ego and Directly connected to ego
+c = Nodes who are the same type as ego and *not* directly connected to ego
+
+b = Nodes who are a different type than ego and directly connected to ego
+d = Nodes who are a different type than ego and *not* directly connected to ego
+
+```{r Yule's Q, include=FALSE}
+qi = function(a,b,c,d){
+  QI = (a*b-b*c)/(a*d+b*c)
+  return(QI)
+}
+```
+
+```{r}
+qi(a = 2, b = 3, c = 2, d = 3)
+
+```
+
+
+### 4.2.1 What do you conclude substantively?
+
+> (taking into account that it is a friendship among students)
+
 > Make sure to discuss the reference points for the measure.
 
+
+
+
 ### 4.2.2 What is the difference with the EI index?
+
+Yule’s Q varies from -1 (perfect heterophily) to +1 (perfect homophily) and a zero value would mean no pattern (i.e. equaly distributed in terms of types), same as the EI index.

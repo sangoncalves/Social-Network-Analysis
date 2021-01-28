@@ -53,7 +53,7 @@ plot(frienship_igraph, layout=layout_with_fr,
      vertex.shape = "sphere",
      vertex.label.cex = 1,
      vertex.label.color = "grey3",
-     vertex.label.dist = 1.5,
+     vertex.label.dist = 2,
      vertex.label.degree=-pi/2)
 ```
 
@@ -76,15 +76,15 @@ V(frienship_igraph)$shape[V(frienship_igraph)$Gender == 1] <- "sphere"
 
 V(frienship_igraph)$color[V(frienship_igraph)$Music == 1] <- "red"
 V(frienship_igraph)$color[V(frienship_igraph)$Music == 2] <- "goldenrod1"
-V(frienship_igraph)$color[V(frienship_igraph)$Music == 3] <- "green"
-V(frienship_igraph)$color[V(frienship_igraph)$Music == 4] <- "black"
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 3] <- "blue"
+V(frienship_igraph)$color[V(frienship_igraph)$Music == 4] <- "pink"
 V(frienship_igraph)$color[V(frienship_igraph)$Music == 5] <- "olivedrab3"
 
 plot(frienship_igraph, layout=layout_with_fr,
      vertex.size = V(frienship_igraph)$Grade*2,
      vertex.label.cex = 1,
      vertex.label.color = "grey3",
-     vertex.label.dist = 1.5)
+     vertex.label.dist = 2)
 
 ```
 
@@ -96,25 +96,18 @@ plot(frienship_igraph, layout=layout_with_fr,
      vertex.size = V(frienship_igraph)$Grade*2,
      vertex.label.cex = 1,
      vertex.label.color = "grey3",
-     vertex.label.dist = 1.5,)
+     vertex.label.dist = 2)
 
-legend("bottomright", legend=c("Female", "Male"), 
-       pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
+legend("bottomright", legend=c("Male", "Female"), 
+       pch=c(0, 19), pt.bg=c("black", "red"), pt.cex=2, bty="n")
 
-legend("topleft", inset=.02,
-   c("Rock Music", "Electronic Dance Music","Pop Music", "Latin", "R&B"),fill =frienship_igraph$Music , horiz=FALSE, cex=0.8)
-
+legend("topright", inset=.02, c("Rock Music", "Electronic Dance Music","Pop Music", "Latin", "R&B"), fill=c("red", "goldenrod1", "blue", "pink", "olivedrab3"), horiz=FALSE, cex=0.8)
 
 
-# legend(x=.9, y=.9, legend=c("Female", "Male"), 
-#        pch=21, pt.bg=c("black", "red"), pt.cex=2, bty="n")
 ```
 
 ## 1.4. Add the script of how you obtained the drawings.
 The code is on Rmarkdown file.
-
-
-
 
 # 2. Centrality
 
@@ -130,9 +123,11 @@ print("Centrality of nodes in descending order")
 sort(centrality, decreasing = T)
 ```
 
+Centrality measure identifies the most influential people in the network. Among the nodes, Jean is the most central node. She has the highest efficiency in spreading the information across the network.
+
 ### 2.1.1 What does it mean substantively in this case?
 
-If we consider the flow of information, where we want to spread the information than the most efficient person to spread it would be "Jean" (information reach all network faster) and the last efficient one would be "Ellen" (takes long for the information to reach all network). In this case, the more central a person (node) is, the closer he/she is from all other people (nodes) in the network.
+If we consider the flow of information, where we want to spread the information than the most efficient person to spread it would be "Jean" (information reaches all network faster) and the last efficient one would be "Ellen" (takes long for the information to reach all network). In this case, the more central a person (node) is, the closer he/she is from all other people (nodes) in the network. 
 
 
 ### 2.1.2 Who is most closeness central?
@@ -178,7 +173,7 @@ print(betweenness_centrality[which.max(betweenness_centrality)])
 
 ### 2.2.3 Provide details of the meaning of the value.
 
-In some cases, certain parts of the network can only be reached through a certain node, that confers "power" to the node in a way that it could control the flow of information of the network
+In some cases, certain parts of the network can only be reached through a certain node, that confers "power" to the node in a way that it could control the flow of information of the network.
 
 ### 2.2.4 Make sure to discuss the reference points for the betweenness measure. What is the minimum and maximum value?
 
@@ -188,6 +183,8 @@ print(betweenness_centrality[which.max(betweenness_centrality)])
 print("Minimum value:")
 print(betweenness_centrality[which.min(betweenness_centrality)])
 ```
+
+In this network, we have 3 sub-groups which are connected through Jean only. So the communication among those sub-groups is controlled by Jean(bridge). Grace and Ellen(the 2 lowest values) have least control over the information flow, since they are at the farther end of the network.
 
 # 3. Density and reciprocity    
 > Figure 1 provides the advice network among 9 employees in a team.
@@ -253,7 +250,7 @@ paste("density of the network = ",17/(9*8))
 ### 3.1.1 What do you conclude substantively 
 > (taking into account that the network is “Who did you ask advice from in the last week?”)?
 
-Each node in average has under than 50% of connections with each other, so their relationship might not being so strong. Inc a case where we want to analyze the diffusion of a information, we would not have an desirable efficiency due to the lack of connections among the nodes of the network.
+Each node in average has under than 50% of connections with each other, so their relationship might not being so strong. In a case where we want to analyze the diffusion of information, we would not have an desirable efficiency due to the lack of connections among the nodes of the network.
 
 
 ### 3.1.2 Make sure to discuss the reference points for the measure. What is the minimum and maximum value?
@@ -324,7 +321,7 @@ paste("arc_rec_g: ",arc_rec_g)
 paste("arc_rec_h: ",arc_rec_h)
 paste("arc_rec_i: ",arc_rec_i)
 ```
-In this scenario we have nodes that do not reciprocate (c,f,h and i) and nodes that own the highest reciprocity (a,d,g). We can understand this network as an unbalanced network in terms of providing advice. Other interpretation is that the nodes *a*,*d* and *g*, are the ones perceived as the ones that holds the best information (advice).
+In this scenario we have nodes that do not reciprocate (c,f,h and i) and nodes that own the highest reciprocity (a,d,g). We can understand this network as an unbalanced network in terms of providing advice. Other interpretation is that the nodes *a*,*d* and *g*, are the ones perceived as holding the best information (advice).
 
 # 4. Homophily/Heterophily for ego
 > Figure 2 shows the friendship network among students (with gender Male and Female).
@@ -332,12 +329,12 @@ In this scenario we have nodes that do not reciprocate (c,f,h and i) and nodes t
 ## 4.1. Calculate the EI-index for person b in Figure 2.
 > Make sure to show how you came to this answer.
 
-EL-index = $\frac{(Ext - Int)}{(Ext + Int)}$ 
+EI-index = $\frac{(Ext - Int)}{(Ext + Int)}$ 
 
 Ext = different type as node
-Int = Same type as node
+Int = Same type as node 
 
-EL-index (b) = (2 - 2)/(2 + 2)
+EI-index (b) = (2 - 2)/(2 + 2)
 ```{r echo=FALSE}
 (2 - 2)/(2 + 2)
 ```
@@ -372,9 +369,9 @@ yq_index = function(a,b,c,d){
 ```
 
 In our case:
-a = 2, b = 3, c = 2, d = 3
+a = 2, b = 3, c = 2, d = 3 <br/>
 Yules Q = $\frac{2*3 - 3*2}{2*3+ 3*2}$
-```{r}
+```{r echo=FALSE}
 paste("Yules Q = ", yq_index(a = 2, b = 3, c = 2, d = 3))
 
 ```

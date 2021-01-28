@@ -1,8 +1,8 @@
 ---
 title: "Social Network Analysis"
 author: 
-- "Sander_MartinsGoncalves
-- Nisha_Antony"
+- "Nisha_Antony"
+- "Sander_MartinsGoncalves"
 date: "27/01/2021"
 output: html_document
 ---

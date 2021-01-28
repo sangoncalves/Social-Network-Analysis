@@ -375,7 +375,7 @@ In our case:
 a = 2, b = 3, c = 2, d = 3
 Yules Q = $\frac{2*3 - 3*2}{2*3+ 3*2}$
 ```{r}
-paste("Yules Q = ", yq_index(a = 2, b = 3, c = 2, d = 3)
+paste("Yules Q = ", yq_index(a = 2, b = 3, c = 2, d = 3))
 
 ```
 

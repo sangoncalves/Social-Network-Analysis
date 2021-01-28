@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Social Network Analysis"
 author: "Sander_MartinsGoncalves&Nisha_Antony"
 date: "27/01/2021"
 output: html_document
@@ -109,7 +109,7 @@ legend("topleft", inset=.02,
 ```
 
 ## 1.4. Add the script of how you obtained the drawings.
-Can be seem above.
+Can be seen above.
 
 
 
@@ -126,9 +126,6 @@ Can be seem above.
 centrality <- closeness(frienship_igraph, normalized = T)
 print("Centrality of nodes in descending order")
 sort(centrality, decreasing = T)
-print("Highest centrality value: ")
-centrality[which.max(centrality)]
-
 ```
 
 ### 2.1.1 What does it mean substantively in this case?
@@ -139,9 +136,9 @@ If we consider the flow of information, where we want to spread the information 
 ### 2.1.2 Who is most closeness central?
 
 ```{r echo=FALSE}
-betweenness_centrality <- betweenness(frienship_igraph, directed = F, normalized = T)
-print("The most central is:")
-sort(betweenness_centrality, decreasing = T)
+
+print("Highest centrality value: ")
+centrality[which.max(centrality)]
 ```
 
 ### 2.1.3 Provide details of the meaning of the value.
@@ -344,8 +341,7 @@ EL-index (b) = (2 - 2)/(2 + 2)
 
 > Make sure to discuss the reference points for the measure.
 
-
-Person-b is a female and has 2 male friends and 2 female friends. Equally quantity of nodes types.
+EI score of 0 means that an equal number of alters are of both the same "type" as the ego, and different types. Here, Person-b is a female and has 2 male friends and 2 female friends. Equally quantity of nodes types.
 
 
 ## 4.2. Next, calculate Yule’s Q for person b in Figure 2.
